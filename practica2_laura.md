@@ -1,7 +1,31 @@
-# Práctica 2 
+# Práctica 2 Laura Alonso
 
-## Preparación en instalación de la red
-**Cliente Windows:**
+# Índice
+
+- [Práctica 2 Laura Alonso](#práctica-2-laura-alonso)
+- [Índice](#índice)
+  - [Preparación en la instalación de la red](#preparación-en-la-instalación-de-la-red)
+    - [Cliente Windows:](#cliente-windows)
+    - [Router Pfsese:](#router-pfsese)
+    - [Cliente Debian](#cliente-debian)
+    - [Servidor Debian](#servidor-debian)
+- [Ejercicio 1](#ejercicio-1)
+    - [Servidor Debian - Instalación del servidor DHCP](#servidor-debian---instalación-del-servidor-dhcp)
+    - [Configuraciones adicionales](#configuraciones-adicionales)
+    - [Reiniciar y verificar servicio DHCP](#reiniciar-y-verificar-servicio-dhcp)
+- [Ejercicio 2](#ejercicio-2)
+    - [Cliente Windows - Configuración IP](#cliente-windows---configuración-ip)
+    - [Cliente Linux - Configuración IP](#cliente-linux---configuración-ip)
+    - [Verificación de conectividad](#verificación-de-conectividad)
+- [Ejercicio 3](#ejercicio-3)
+    - [DHCPDISCOVER:](#dhcpdiscover)
+    - [DHCPOFFER:](#dhcpoffer)
+    - [DHCPREQUEST:](#dhcprequest)
+    - [DHCPACK:](#dhcpack)
+
+
+## Preparación en la instalación de la red
+### Cliente Windows:
 Vamos a instalar una máquina virtual con el sistema operativo Windows. Esta máquina tendrá un adaptador de red configurado para funcionar en red interna, a la que llamaremos SRI200. El nombre que daremos a esta máquina será W-LAURA.
 
 ![Máquina de Windows](./imagenes-sri/maquina-windows.png)
@@ -9,7 +33,7 @@ Vamos a instalar una máquina virtual con el sistema operativo Windows. Esta má
 Configuramos el cliente de Windows para que obtenga su dirección IP de forma automática a través de un servidor DHCP. 
 ![Máquina de Windows](./imagenes-sri/ip-cliente-windows-dhcp.png)
  
-**Router Pfsese:**
+### Router Pfsese:
 
 En el siguiente paso, vamos a instalar el router PfSense, que será el encargado de gestionar la red. Este router tendrá dos adaptadores de red: el primero estará en modo adaptador puente para conectarse a la red externa y permitir el acceso a Internet, y el segundo en red interna SRI200 para comunicar con las máquinas virtuales.
 
@@ -19,7 +43,7 @@ Asignamos la dirección IP 10.0.200.1 al router, que será la puerta de enlace d
 
 ![Máquina de PfSense](./imagenes-sri/ip-pfsense.png)
 
-**Cliente Debian:**
+### Cliente Debian
 
 Instalamos una máquina virtual con el sistema operativo Debian Server para simular un cliente Linux. A esta máquina le asignaremos un único adaptador de red en red interna SRI200, y la llamaremos U-LAURA.
 
@@ -29,7 +53,7 @@ Configuramos esta máquina para que obtenga su dirección IP mediante DHCP. Para
 
 ![Máquina de Debian_cliente](./imagenes-sri/ip-cliente-linux.png)
 
-**Servidor Debian:**
+### Servidor Debian
 
 Ahora instalamos otra máquina virtual con el sistema operativo Debian, que funcionará como servidor en nuestra red interna. Esta máquina tendrá un adaptador de red configurado en red interna SRI200 y se llamará D-LAURA.
 
@@ -45,9 +69,9 @@ Para verificar si hay conectividad, hacemos un ping al sitio web www.google.es. 
 
 ![Navega por internet](./imagenes-sri/ping-google-debian.png)
 
-## Ejercicio 1
+# Ejercicio 1
 
-**Servidor Debian:**
+### Servidor Debian - Instalación del servidor DHCP
 
 En este paso, instalamos el paquete isc-dhcp-server en la máquina Debian que actúa como servidor. Utilizamos el siguiente comando para llevar a cabo la instalación:
 
@@ -60,6 +84,8 @@ Después de la instalación, ejecutamos el comando ss -ltun para obtener informa
 Para que el servidor DHCP funcione correctamente, es necesario configurar las interfaces de red en las que estará activo. Esto se realiza editando el archivo /etc/default/isc-dhcp-server, donde añadimos la interfaz enp0s3 a interfacesv4.
 
 ![Servidor Debian](./imagenes-sri/interfaces.default-debian.png)
+
+### Configuraciones adicionales
 
 Configuraciones adicionales para cumplir los requisitos:
 
@@ -82,6 +108,8 @@ A continuación, editamos el archivo principal de configuración del servidor DH
   
 ![Servidor Debian](./imagenes-sri/3.dhcp.conf.png)
 
+### Reiniciar y verificar servicio DHCP
+
 - Una vez configurado todo, reiniciamos el servicio para aplicar los cambios.
   
 ![Servidor Debian](./imagenes-sri/reiniciar_debian.png)
@@ -91,9 +119,9 @@ A continuación, editamos el archivo principal de configuración del servidor DH
 ![Servidor Debian](./imagenes-sri/restart-status-debian.png)
 
 
-## Ejercicio 2
+# Ejercicio 2
 
-**Windows:**
+### Cliente Windows - Configuración IP
 
 Configuramos la máquina cliente con Windows para que obtenga su dirección IP a través del servidor DHCP.
 
@@ -107,11 +135,13 @@ Hacemos un ping a la máquina Linux para comprobar la conectividad entre las má
 
 ![Máquina windows](./imagenes-sri/ping-windows.png)
 
-**Linux**
+### Cliente Linux - Configuración IP
 
 Al igual que en Windows, configuramos el cliente Linux para que obtenga su dirección IP de forma dinámica a través del servidor DHCP. Esto se realiza editando el fichero /etc/network/interfaces.
 
 ![Máquina Linux](./imagenes-sri/ip-cliente-linux.png)
+
+### Verificación de conectividad
 
 Utilizamos el comando ip a para revisar la configuración de red, y cat /etc/resolv.conf para comprobar los DNS asignados.
 
@@ -121,24 +151,24 @@ Hacemos un ping a la máquina Windows para comprobar que ambas máquinas se pued
 
 ![Máquina Linux](./imagenes-sri/ping-linux.png)
 
-## Ejercicio 3
+# Ejercicio 3
 
 Utilizamos el comando journalctl -f -u isc-dhcp-server para observar los mensajes de log del servidor DHCP en tiempo real.
 
 ![Máquina Debian](./imagenes-sri/journalctl_debian.PNG)
 
-- DHCPDISCOVER:
+### DHCPDISCOVER:
 
 Es el mensaje que envía un cliente cuando está buscando un servidor DHCP en la red para solicitar una dirección IP.
 
-- DHCPOFFER:
+### DHCPOFFER:
 
  El servidor DHCP responde a la solicitud DHCPDISCOVER con este mensaje, ofreciendo una dirección IP al cliente.
 
-- DHCPREQUEST:
+### DHCPREQUEST:
 
 Una vez el cliente recibe una oferta de dirección IP, envía este mensaje para solicitar formalmente la dirección IP ofrecida.
 
-- DHCPACK:
+### DHCPACK:
 
 El servidor DHCP confirma la asignación de la dirección IP al cliente con este mensaje, indicando que ya puede ser utilizada.
